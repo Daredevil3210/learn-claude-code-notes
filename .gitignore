@@ -1,0 +1,43 @@
+# Credentials and local settings
+.env
+.env.*
+!.env.example
+.envrc
+*.pem
+*.key
+.pypirc
+
+# Python environments and generated files
+.venv/
+venv/
+env/
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage*
+htmlcov/
+
+# Editors and OS metadata
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Agent runtime state, local experiments and output
+.runtime/
+.transcripts/
+.memory/
+.tasks/
+.task_outputs/
+*.log
+*.tmp
+*.bak
+hello.py
+scratch/
+tmp/
