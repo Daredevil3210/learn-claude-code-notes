@@ -2,7 +2,7 @@
 
 [English](README.md) · [中文](README.zh.md) · [日本語](README.ja.md)
 
-`s01` → [s02](https://github.com/shareAI-lab/learn-claude-code/tree/ce8f9f186058939da54c9d6fead78dfb5d0fd6c3/s02_tool_use) → s03 → s04 → ... → s16 → s17
+`s01` → [s02](../s02_tool_use/) → s03 → s04 → ... → s16 → s17
 > *"One loop & Bash is all you need"* — ツール一つ + ループ一つ = 一つの Agent。
 >
 > **Harness レイヤー**: ループ — モデルと現実世界をつなぐ最初の架け橋。

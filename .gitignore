@@ -39,5 +39,6 @@ Desktop.ini
 *.tmp
 *.bak
 hello.py
+/s02_tool_use/test.py
 scratch/
 tmp/
