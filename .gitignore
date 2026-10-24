@@ -38,7 +38,8 @@ Desktop.ini
 *.log
 *.tmp
 *.bak
-hello.py
+/s01_agent_loop/hello.py
 /s02_tool_use/test.py
+/s04_hooks/test.txt
 scratch/
 tmp/

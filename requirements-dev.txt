@@ -1,0 +1,3 @@
+# Optional dependencies for running the included example tests.
+-r requirements.txt
+pytest>=8.0
