@@ -41,5 +41,6 @@ Desktop.ini
 /s01_agent_loop/hello.py
 /s02_tool_use/test.py
 /s04_hooks/test.txt
+/s06_subagent/example/_tmp_check.py
 scratch/
 tmp/
