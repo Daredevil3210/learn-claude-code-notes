@@ -1,8 +1,8 @@
-# Learn Claude Code：s01–s07 学习记录
+# Learn Claude Code：s01–s08 学习记录
 
-本项目整理了 [shareAI-lab/learn-claude-code](https://github.com/shareAI-lab/learn-claude-code) 的前七章、手写练习和学习摘要，目前学习覆盖 Agent 循环、工具调用、权限检查、Hooks、TodoWrite 任务规划、Subagent 子任务委派和技能按需加载。
+本项目整理了 [shareAI-lab/learn-claude-code](https://github.com/shareAI-lab/learn-claude-code) 的前八章、手写练习和学习摘要，目前学习覆盖 Agent 循环、工具调用、权限检查、Hooks、TodoWrite 任务规划、Subagent 子任务委派、技能按需加载和上下文压缩。
 
-这是课程学习整理仓库，并非 Claude Code 官方项目。仓库继续使用原名称 `s01-agent-loop-learning`，后续学习内容在同一仓库内更新。完整课程和第八章起的内容请访问上游仓库。
+这是课程学习整理仓库，并非 Claude Code 官方项目。仓库继续使用原名称 `s01-agent-loop-learning`，后续学习内容在同一仓库内更新。完整课程和第九章起的内容请访问上游仓库。
 
 ## 当前学习范围
 
@@ -13,6 +13,7 @@
 5. [s05：TodoWrite](s05_todo_write/README.zh.md) — 用带状态的任务列表管理计划，在连续三轮未更新计划时向模型追加提醒。
 6. [s06：Subagent](s06_subagent/README.zh.md) — 主 Agent 通过 `task` 委派子任务；子 Agent 使用独立消息列表运行，最终文本作为工具结果返回。
 7. [s07：Skill Loading](s07_skill_loading/README.zh.md) — 启动时建立技能目录，向模型提供名称和简介，需要时通过 `load_skill` 返回技能全文。
+8. [s08：Context Compact](s08_context_compact/README.zh.md) — 请求模型前整理工具结果和旧消息，必要时总结历史，并提供主动压缩及上下文过长后的补救。
 
 每章均提供独立的 `code.py`、中英日教程及 SVG 配图。按章节顺序阅读；运行某一章时，不需要先启动其他章节。
 
@@ -31,8 +32,9 @@
 - `s06_subagent/code.py`：`task` 工具定义与处理函数、独立消息列表、最多 30 轮的子 Agent 循环及父子共用的工具 Hooks。
 - `s06_subagent/example/string_tools.py`：子任务练习生成的 `slugify()`，处理大小写、重音字符和分隔符，并拒绝非字符串输入。
 - `s07_skill_loading/code.py`：`SkillLoader` 扫描技能、解析 YAML 文件头、生成目录、组装系统提示词及按名称加载全文。
+- `s08_context_compact/code.py`：工具结果转存、消息归档、旧结果缩短、历史摘要、`compact` 工具及一次异常补救。
 - `skills/`：第七章使用的四份示例技能，以及 `agent-builder` 引用的参考文件和脚手架脚本。
-- `requirements.txt`：运行 s01–s07 所需的直接依赖，七章共用一套环境；第七章新增 PyYAML 用于解析技能文件头。
+- `requirements.txt`：运行 s01–s08 所需的直接依赖，八章共用一套环境；第七章需要 PyYAML 解析技能文件头，第八章没有新增第三方运行依赖。
 - `requirements-dev.txt`：可选测试依赖，运行示例测试时安装。
 - `.python-version`：建议使用的 Python 版本。
 - `.env.example`：配置模板，不包含真实密钥。
@@ -90,6 +92,7 @@ API 请求可能计费。不要将 `.env`、真实密钥或个人数据提交到
 .\.venv\Scripts\python.exe .\s05_todo_write\code.py
 .\.venv\Scripts\python.exe .\s06_subagent\code.py
 .\.venv\Scripts\python.exe .\s07_skill_loading\code.py
+.\.venv\Scripts\python.exe .\s08_context_compact\code.py
 ```
 
 macOS / Linux：
@@ -98,9 +101,9 @@ macOS / Linux：
 .venv/bin/python s01_agent_loop/code.py
 ```
 
-macOS / Linux 可将命令中的章节路径替换为对应的 `s02_tool_use/code.py`、`s03_permission/code.py`、`s04_hooks/code.py`、`s05_todo_write/code.py`、`s06_subagent/code.py` 或 `s07_skill_loading/code.py`。
+macOS / Linux 可将命令中的章节路径替换为对应的 `s02_tool_use/code.py`、`s03_permission/code.py`、`s04_hooks/code.py`、`s05_todo_write/code.py`、`s06_subagent/code.py`、`s07_skill_loading/code.py` 或 `s08_context_compact/code.py`。
 
-看到对应的 `s01 >>` 至 `s07 >>` 提示符后输入任务。可以先要求“调用命令工具，只输出 hello-agent，并告诉我实际输出”。输入 `q` 或 `exit` 退出。
+看到对应的 `s01 >>` 至 `s08 >>` 提示符后输入任务。可以先要求“调用命令工具，只输出 hello-agent，并告诉我实际输出”。输入 `q` 或 `exit` 退出。
 
 第五章可使用任务：`Review Python files under s05_todo_write/example and fix any style issues`。请从仓库根目录启动 Agent，保持任务中的相对路径与当前工作目录一致。
 
@@ -108,11 +111,15 @@ macOS / Linux 可将命令中的章节路径替换为对应的 `s02_tool_use/cod
 
 第七章同样从仓库根目录启动，因为 `SKILLS_DIR = WORKDIR / "skills"`。可以先问 `What skills are available?`，再输入 `Load the code-review skill and follow its instructions`，观察 `load_skill` 工具调用。技能文件读取本身不执行文档中的命令，模型随后可根据说明提出其他工具调用。
 
+第八章仍从仓库根目录启动。可以输入“读取 s01_agent_loop 到 s05_todo_write 各章的 README.md，比较一级标题，并给出总结”，再要求“调用 compact 工具压缩历史，然后继续说明下一步”。达到阈值时才会触发自动压缩，少量文件读取不保证出现 `[auto compact]`。历史归档位于 `.transcripts/`，大工具结果保存在 `.task_outputs/tool-results/`；这些运行文件不会提交。
+
+第八章原教程中引用的 `web/src/data/generated/docs.json` 和第九章文件属于完整上游课程，本整理仓库未收录。可先使用上述已包含的章节进行练习。模型执行任务和生成历史摘要会调用 API。
+
 Windows 上工具虽然名为 `bash`，程序实际通过 `cmd.exe` 执行命令，语法与 PowerShell 不同。
 
-## 运行第五章示例测试
+## 运行本地示例测试
 
-测试只覆盖示例包的本地文本函数，不调用模型 API。先在仓库根目录安装可选依赖：
+第五章示例包的测试覆盖本地文本函数，不调用模型 API。先在仓库根目录安装可选依赖：
 
 ```powershell
 uv pip install --python .\.venv\Scripts\python.exe -r requirements-dev.txt
@@ -147,6 +154,7 @@ macOS / Linux 使用 `.venv/bin/python -m doctest -v s06_subagent/example/string
 5. s05：模型通过 `todo_write` 更新完整任务列表；`TodoManager` 先校验再替换旧状态，`render()` 返回可读文字，`run_todo_write()` 打印并返回工具结果。
 6. s06：`TASK_TOOL` 向模型说明工具，`TOOLS` 包含它，`TOOL_HANDLERS["task"]` 对应 `run_subagent`；模型提出调用请求后，程序执行函数并返回工具结果。
 7. s07：`scan()` 建立 `self.skills` 字典，`catalog()` 仅返回名称和简介，`build_system_prompt()` 将目录放进系统提示词，`load(name)` 返回缓存的完整技能文字。
+8. s08：`prepare()` 每轮先检查工具结果预算和消息数量，超限时依次缩短旧结果、转存其他大结果，仍过长才调用模型生成摘要；理解消息切片、工具调用配对和批次完成后再压缩的顺序。
 
 s04 中的 `context_inject_hook()` 当前只是打印工作目录，没有修改发给模型的消息；`summary_hook()` 统计历史中的 `tool_result` 条目，包含以工具结果形式记录的拒绝信息。`Stop` 钩子返回 `None` 时允许结束，返回非空提示字符串时可请求继续运行。
 
@@ -156,7 +164,11 @@ s06 每次调用 `run_subagent(prompt)` 都新建 `messages`，不会自动复�
 
 s07 启动时已经把技能全文读入 Python 内存，但系统提示词只包含目录。`load_skill` 按注册名称查询，不把名称当作文件路径；返回内容作为 `tool_result` 进入消息历史。技能没有自动执行功能，也不会训练模型。缺少名称时使用文件夹名，缺少简介时使用正文首行；同名技能按扫描顺序由后者覆盖前者。文件修改后需要重新扫描才能刷新缓存，系统提示词中的目录也需要重新构建。
 
-`skills/agent-builder/` 内的参考代码和生成器是独立教学资源，并非七章程序的统一入口；其中部分示例使用 `MODEL_NAME`，主章节程序使用 `.env.example` 中的 `MODEL_ID`。
+s08 使用字符数估算大小，`CONTEXT_CHAR_LIMIT = 50000`，压缩目标为阈值的 80%；字符数不等于 token 数。`micro_compact()` 只处理旧的已读工具结果，保留最近三条已读结果并跳过尚未读过的新结果；必要时 `fit_tool_results()` 可转存新结果并保留预览。工具结果预算、消息归档和文本替换不产生额外模型请求；`compact_history()` 与 `reactive_compact()` 需要请求模型生成摘要。
+
+s08 归档消息时保护 `tool_use` 与 `tool_result` 的配对。历史摘要单独携带 `active_request`，以保留本轮用户任务。API 报上下文过长时最多进行一次连续失败补救，成功后计数清零。模型主动调用 `compact` 时，程序先执行整批工具并记录所有结果，再统一总结，避免遗漏已完成的文件操作。压缩会减少当前消息中的细节，完整资料需按保存路径重新读取。
+
+`skills/agent-builder/` 内的参考代码和生成器是独立教学资源，并非八章程序的统一入口；其中部分示例使用 `MODEL_NAME`，主章节程序使用 `.env.example` 中的 `MODEL_ID`。
 
 ## 运行边界
 
@@ -166,6 +178,7 @@ s07 启动时已经把技能全文读入 Python 内存，但系统提示词只�
 
 ## 版本记录
 
+- [v0.6.0](https://github.com/Daredevil3210/s01-agent-loop-learning/releases/tag/v0.6.0)：学习范围扩展到 s08，加入上下文压缩代码、三语教程和 15 张配图，补充自动整理、主动压缩和异常补救说明。
 - [v0.5.0](https://github.com/Daredevil3210/s01-agent-loop-learning/releases/tag/v0.5.0)：学习范围扩展到 s07，加入技能加载代码、教程、四份技能及参考资源，补齐 PyYAML 和第六章字符串练习。
 - [v0.4.0](https://github.com/Daredevil3210/s01-agent-loop-learning/releases/tag/v0.4.0)：学习范围扩展到 s06，加入 Subagent 代码、三语教程和配图，补充任务委派、消息隔离及运行说明。
 - [v0.3.0](https://github.com/Daredevil3210/s01-agent-loop-learning/releases/tag/v0.3.0)：学习范围扩展到 s05，加入 TodoWrite、第五章示例包及测试，补充可选测试环境和运行步骤。
@@ -178,6 +191,6 @@ s07 启动时已经把技能全文读入 Python 内存，但系统提示词只�
 
 课程源码、教程与配图来源于 [shareAI-lab/learn-claude-code](https://github.com/shareAI-lab/learn-claude-code)，整理时上游基准提交为 `ce8f9f186058939da54c9d6fead78dfb5d0fd6c3`。
 
-本整理版保留本地学习代码和第一章程序的本地改动，并收录第二至第七章、第二章学习摘要、第五至第六章练习成果及第七章所需的技能资源；已收录章节之间使用本地导航，第七章指向第八章的链接转到上游对应版本。另有独立安装说明与不含密钥的配置模板。未包含原仓库的 Git 历史、第八章起的内容或本地环境。
+本整理版保留本地学习代码和第一章程序的本地改动，并收录第二至第八章、第二章学习摘要、第五至第六章练习成果及第七章所需的技能资源；已收录章节之间使用本地导航，第八章指向第九章的链接转到上游对应版本。另有独立安装说明与不含密钥的配置模板。未包含原仓库的 Git 历史、第九章起的内容或本地环境。
 
 原作者版权：Copyright (c) 2024 shareAI Lab。代码沿用 [MIT License](LICENSE)；分发时请保留原版权和许可声明。
