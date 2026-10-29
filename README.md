@@ -1,8 +1,8 @@
-# Learn Claude Code：s01–s08 学习记录
+# Learn Claude Code：s01–s09 学习记录
 
-本项目整理了 [shareAI-lab/learn-claude-code](https://github.com/shareAI-lab/learn-claude-code) 的前八章、手写练习和学习摘要，目前学习覆盖 Agent 循环、工具调用、权限检查、Hooks、TodoWrite 任务规划、Subagent 子任务委派、技能按需加载和上下文压缩。
+本项目整理了 [shareAI-lab/learn-claude-code](https://github.com/shareAI-lab/learn-claude-code) 的前九章、手写练习和学习摘要，目前学习覆盖 Agent 循环、工具调用、权限检查、Hooks、TodoWrite 任务规划、Subagent 子任务委派、技能按需加载、上下文压缩和跨会话记忆。
 
-这是课程学习整理仓库，并非 Claude Code 官方项目。仓库继续使用原名称 `s01-agent-loop-learning`，后续学习内容在同一仓库内更新。完整课程和第九章起的内容请访问上游仓库。
+这是课程学习整理仓库，并非 Claude Code 官方项目。仓库继续使用原名称 `s01-agent-loop-learning`，后续学习内容在同一仓库内更新。完整课程和第十章起的内容请访问上游仓库。
 
 ## 当前学习范围
 
@@ -14,6 +14,7 @@
 6. [s06：Subagent](s06_subagent/README.zh.md) — 主 Agent 通过 `task` 委派子任务；子 Agent 使用独立消息列表运行，最终文本作为工具结果返回。
 7. [s07：Skill Loading](s07_skill_loading/README.zh.md) — 启动时建立技能目录，向模型提供名称和简介，需要时通过 `load_skill` 返回技能全文。
 8. [s08：Context Compact](s08_context_compact/README.zh.md) — 请求模型前整理工具结果和旧消息，必要时总结历史，并提供主动压缩及上下文过长后的补救。
+9. [s09：Memory](s09_memory/README.zh.md) — 将可复用信息保存为记忆文件，在新请求中按需召回，并提取、去重和整理长期知识。
 
 每章均提供独立的 `code.py`、中英日教程及 SVG 配图。按章节顺序阅读；运行某一章时，不需要先启动其他章节。
 
@@ -33,8 +34,9 @@
 - `s06_subagent/example/string_tools.py`：子任务练习生成的 `slugify()`，处理大小写、重音字符和分隔符，并拒绝非字符串输入。
 - `s07_skill_loading/code.py`：`SkillLoader` 扫描技能、解析 YAML 文件头、生成目录、组装系统提示词及按名称加载全文。
 - `s08_context_compact/code.py`：工具结果转存、消息归档、旧结果缩短、历史摘要、`compact` 工具及一次异常补救。
+- `s09_memory/code.py`：记忆文件与索引、相关性选择、限长召回、长期信息提取、临时信息和重复过滤，以及带失败恢复的批量整理。
 - `skills/`：第七章使用的四份示例技能，以及 `agent-builder` 引用的参考文件和脚手架脚本。
-- `requirements.txt`：运行 s01–s08 所需的直接依赖，八章共用一套环境；第七章需要 PyYAML 解析技能文件头，第八章没有新增第三方运行依赖。
+- `requirements.txt`：运行 s01–s09 所需的直接依赖，九章共用一套环境；第七章技能和第九章记忆均使用 PyYAML 解析文件头，第八、九章没有新增第三方运行依赖。
 - `requirements-dev.txt`：可选测试依赖，运行示例测试时安装。
 - `.python-version`：建议使用的 Python 版本。
 - `.env.example`：配置模板，不包含真实密钥。
@@ -93,6 +95,7 @@ API 请求可能计费。不要将 `.env`、真实密钥或个人数据提交到
 .\.venv\Scripts\python.exe .\s06_subagent\code.py
 .\.venv\Scripts\python.exe .\s07_skill_loading\code.py
 .\.venv\Scripts\python.exe .\s08_context_compact\code.py
+.\.venv\Scripts\python.exe .\s09_memory\code.py
 ```
 
 macOS / Linux：
@@ -101,9 +104,9 @@ macOS / Linux：
 .venv/bin/python s01_agent_loop/code.py
 ```
 
-macOS / Linux 可将命令中的章节路径替换为对应的 `s02_tool_use/code.py`、`s03_permission/code.py`、`s04_hooks/code.py`、`s05_todo_write/code.py`、`s06_subagent/code.py`、`s07_skill_loading/code.py` 或 `s08_context_compact/code.py`。
+macOS / Linux 可将命令中的章节路径替换为对应的 `s02_tool_use/code.py`、`s03_permission/code.py`、`s04_hooks/code.py`、`s05_todo_write/code.py`、`s06_subagent/code.py`、`s07_skill_loading/code.py`、`s08_context_compact/code.py` 或 `s09_memory/code.py`。
 
-看到对应的 `s01 >>` 至 `s08 >>` 提示符后输入任务。可以先要求“调用命令工具，只输出 hello-agent，并告诉我实际输出”。输入 `q` 或 `exit` 退出。
+看到对应的 `s01 >>` 至 `s09 >>` 提示符后输入任务。可以先要求“调用命令工具，只输出 hello-agent，并告诉我实际输出”。输入 `q` 或 `exit` 退出。
 
 第五章可使用任务：`Review Python files under s05_todo_write/example and fix any style issues`。请从仓库根目录启动 Agent，保持任务中的相对路径与当前工作目录一致。
 
@@ -113,7 +116,11 @@ macOS / Linux 可将命令中的章节路径替换为对应的 `s02_tool_use/cod
 
 第八章仍从仓库根目录启动。可以输入“读取 s01_agent_loop 到 s05_todo_write 各章的 README.md，比较一级标题，并给出总结”，再要求“调用 compact 工具压缩历史，然后继续说明下一步”。达到阈值时才会触发自动压缩，少量文件读取不保证出现 `[auto compact]`。历史归档位于 `.transcripts/`，大工具结果保存在 `.task_outputs/tool-results/`；这些运行文件不会提交。
 
-第八章原教程中引用的 `web/src/data/generated/docs.json` 和第九章文件属于完整上游课程，本整理仓库未收录。可先使用上述已包含的章节进行练习。模型执行任务和生成历史摘要会调用 API。
+第八章原教程中引用的 `web/src/data/generated/docs.json` 属于完整上游课程，本整理仓库未收录；第九章现已包含。可使用本仓库中的章节文件进行练习。模型执行任务和生成历史摘要会调用 API。
+
+第九章同样从仓库根目录启动。先输入 `I prefer using tabs for indentation. Remember that.`，观察 `[Memory: stored ... records]`，检查根目录 `.memory/` 中的记忆文件和 `MEMORY.md` 索引。输入 `q` 退出，重新运行第九章，再问 `What indentation style do I prefer?`，验证跨会话召回。还可输入 `Do not create files in this session.`，检查这类临时要求未成为长期记忆。提取结果依赖模型输出，应以实际文件为准。`.memory/` 是本地运行数据，不会上传。
+
+记忆相关性选择、回答后的提取和达到阈值后的整理会产生额外模型请求。召回选择失败时尝试关键词匹配；没有记忆或没有请求时直接跳过选择。
 
 Windows 上工具虽然名为 `bash`，程序实际通过 `cmd.exe` 执行命令，语法与 PowerShell 不同。
 
@@ -155,6 +162,7 @@ macOS / Linux 使用 `.venv/bin/python -m doctest -v s06_subagent/example/string
 6. s06：`TASK_TOOL` 向模型说明工具，`TOOLS` 包含它，`TOOL_HANDLERS["task"]` 对应 `run_subagent`；模型提出调用请求后，程序执行函数并返回工具结果。
 7. s07：`scan()` 建立 `self.skills` 字典，`catalog()` 仅返回名称和简介，`build_system_prompt()` 将目录放进系统提示词，`load(name)` 返回缓存的完整技能文字。
 8. s08：`prepare()` 每轮先检查工具结果预算和消息数量，超限时依次缩短旧结果、转存其他大结果，仍过长才调用模型生成摘要；理解消息切片、工具调用配对和批次完成后再压缩的顺序。
+9. s09：`write_memory_file()` 写文件并重建索引；`select_relevant_memories()` 选择文件，`load_memories()` 读取正文，`build_system()` 组装背景；回答结束后提取、校验并保存新记忆，达到阈值时整理。
 
 s04 中的 `context_inject_hook()` 当前只是打印工作目录，没有修改发给模型的消息；`summary_hook()` 统计历史中的 `tool_result` 条目，包含以工具结果形式记录的拒绝信息。`Stop` 钩子返回 `None` 时允许结束，返回非空提示字符串时可请求继续运行。
 
@@ -168,15 +176,23 @@ s08 使用字符数估算大小，`CONTEXT_CHAR_LIMIT = 50000`，压缩目标为
 
 s08 归档消息时保护 `tool_use` 与 `tool_result` 的配对。历史摘要单独携带 `active_request`，以保留本轮用户任务。API 报上下文过长时最多进行一次连续失败补救，成功后计数清零。模型主动调用 `compact` 时，程序先执行整批工具并记录所有结果，再统一总结，避免遗漏已完成的文件操作。压缩会减少当前消息中的细节，完整资料需按保存路径重新读取。
 
-`skills/agent-builder/` 内的参考代码和生成器是独立教学资源，并非八章程序的统一入口；其中部分示例使用 `MODEL_NAME`，主章节程序使用 `.env.example` 中的 `MODEL_ID`。
+s09 每条记忆为 `.memory/*.md` 文件，`MEMORY.md` 是名称与简介索引。类型包括 user、feedback、project 和 reference。每次用户请求开始时，模型根据最近用户文本和目录选择最多五条，再读取总计最多 20000 个字符的正文；JSON 包装不计入该额度。系统提示词同时包含索引和本次相关正文，并要求当前用户请求优先于旧记忆。
+
+s09 提取的候选需通过字段校验、`scope == "persistent"`、临时标记和重复检查；名称转换后的文件名、标准化简介或正文任一相同都会被拒绝，这不是语义去重。每次成功保存后更新已有记录列表，避免同批候选重复写入。
+
+s09 新增记忆后，总数达到 10 条时尝试整理；输入超过 20000 字符则跳过。模型被要求合并重复、应用更正并最多保留 30 条，代码校验合格记录非空及文件名不重复，但没有强制检查 30 条上限。替换旧文件前保存内存快照，写入失败时尝试恢复；这不是应对进程退出或断电的磁盘备份。Memory 保存可复用知识，s08 管理当前会话长度；本章独立程序没有直接集成 s08 压缩管线。
+
+`skills/agent-builder/` 内的参考代码和生成器是独立教学资源，并非九章程序的统一入口；其中部分示例使用 `MODEL_NAME`，主章节程序使用 `.env.example` 中的 `MODEL_ID`。
 
 ## 运行边界
 
 这些教学示例会真实执行模型生成的系统命令。字符串黑名单和正则匹配不构成完整沙箱；`cwd` 也不限制文件访问范围。s02 的路径检查主要保护文件工具，s03 和 s04 演示权限审批及钩子机制。请在不含重要文件和额外凭据的练习环境中运行。
 
-仓库仅保留 `.env.example` 配置模板；`.env`、环境目录、编辑器配置、缓存和临时练习文件不随版本发布。第五章的正式示例程序和配套测试、第六章字符串练习及第七章技能资源作为学习成果保留。
+仓库仅保留 `.env.example` 配置模板；`.env`、环境目录、编辑器配置、缓存、`.memory/` 个人记忆、`.transcripts/` 历史和 `.task_outputs/` 工具输出不随版本发布。第五章的正式示例程序和配套测试、第六章字符串练习及第七章技能资源作为学习成果保留。
 
 ## 版本记录
+
+- [v0.7.0](https://github.com/Daredevil3210/s01-agent-loop-learning/releases/tag/v0.7.0)：学习范围扩展到 s09，加入记忆代码、三语教程和 6 张配图，补充存储、召回、提取、去重及整理恢复说明。
 
 - [v0.6.0](https://github.com/Daredevil3210/s01-agent-loop-learning/releases/tag/v0.6.0)：学习范围扩展到 s08，加入上下文压缩代码、三语教程和 15 张配图，补充自动整理、主动压缩和异常补救说明。
 - [v0.5.0](https://github.com/Daredevil3210/s01-agent-loop-learning/releases/tag/v0.5.0)：学习范围扩展到 s07，加入技能加载代码、教程、四份技能及参考资源，补齐 PyYAML 和第六章字符串练习。
@@ -191,6 +207,6 @@ s08 归档消息时保护 `tool_use` 与 `tool_result` 的配对。历史摘要�
 
 课程源码、教程与配图来源于 [shareAI-lab/learn-claude-code](https://github.com/shareAI-lab/learn-claude-code)，整理时上游基准提交为 `ce8f9f186058939da54c9d6fead78dfb5d0fd6c3`。
 
-本整理版保留本地学习代码和第一章程序的本地改动，并收录第二至第八章、第二章学习摘要、第五至第六章练习成果及第七章所需的技能资源；已收录章节之间使用本地导航，第八章指向第九章的链接转到上游对应版本。另有独立安装说明与不含密钥的配置模板。未包含原仓库的 Git 历史、第九章起的内容或本地环境。
+本整理版保留本地学习代码和第一章程序的本地改动，并收录第二至第九章、第二章学习摘要、第五至第六章练习成果及第七章所需的技能资源；已收录章节之间使用本地导航，第九章指向第十章的链接转到上游对应版本。另有独立安装说明与不含密钥的配置模板。未包含原仓库的 Git 历史、第十章起的内容或本地环境。
 
 原作者版权：Copyright (c) 2024 shareAI Lab。代码沿用 [MIT License](LICENSE)；分发时请保留原版权和许可声明。

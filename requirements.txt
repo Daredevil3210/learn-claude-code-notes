@@ -1,4 +1,4 @@
-# Direct dependencies shared by the s01-s08 chapter programs.
+# Direct dependencies shared by the s01-s09 chapter programs.
 anthropic>=0.25.0
 python-dotenv>=1.0.0
 PyYAML>=6.0
