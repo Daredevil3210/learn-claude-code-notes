@@ -2,7 +2,7 @@
 
 [English](README.md) · [中文](README.zh.md) · [日本語](README.ja.md)
 
-s01 → ... → s07 → s08 → `s09` → [s10](https://github.com/shareAI-lab/learn-claude-code/tree/ce8f9f186058939da54c9d6fead78dfb5d0fd6c3/s10_task_system) → s11 → ... → s16 → s17
+s01 → ... → s07 → s08 → `s09` → [s10](../s10_task_system/README.md) → s11 → ... → s16 → s17
 > *"Keep information that later tasks will need."* File storage + an index + relevance selection + on-demand recall.
 >
 > **Harness layer**: Memory stores reusable knowledge outside the conversation and recalls it for related tasks.

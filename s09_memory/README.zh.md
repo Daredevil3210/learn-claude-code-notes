@@ -2,7 +2,7 @@
 
 [English](README.md) · [中文](README.zh.md) · [日本語](README.ja.md)
 
-s01 → ... → s07 → s08 → `s09` → [s10](https://github.com/shareAI-lab/learn-claude-code/tree/ce8f9f186058939da54c9d6fead78dfb5d0fd6c3/s10_task_system) → s11 → ... → s16 → s17
+s01 → ... → s07 → s08 → `s09` → [s10](../s10_task_system/README.zh.md) → s11 → ... → s16 → s17
 > *"把以后还会用到的信息留下来。"* 文件存储 + 索引 + 相关性选择 + 按需召回。
 >
 > **Harness 层**：Memory 在会话之外保存可复用知识，并在相关任务中取回。

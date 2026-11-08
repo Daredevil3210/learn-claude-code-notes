@@ -2,7 +2,7 @@
 
 [English](README.md) · [中文](README.zh.md) · [日本語](README.ja.md)
 
-s01 → ... → s07 → s08 → `s09` → [s10](https://github.com/shareAI-lab/learn-claude-code/tree/ce8f9f186058939da54c9d6fead78dfb5d0fd6c3/s10_task_system) → s11 → ... → s16 → s17
+s01 → ... → s07 → s08 → `s09` → [s10](../s10_task_system/README.ja.md) → s11 → ... → s16 → s17
 > *「後のタスクでも使う情報を残す。」* ファイル保存 + index + 関連性の選択 + 必要時の recall。
 >
 > **Harness レイヤー**：Memory は会話の外に再利用できる知識を保存し、関係するタスクで取り出す。
