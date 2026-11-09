@@ -4,7 +4,7 @@
 
 A study repository for understanding how coding agents work, based on [shareAI-lab/learn-claude-code](https://github.com/shareAI-lab/learn-claude-code). It brings together chapter implementations, tutorials, diagrams, exercises, and implementation notes.
 
-**Current coverage:** s01–s10 · **Suggested Python:** 3.13 · **License:** MIT
+**Current coverage:** s01–s11 · **Suggested Python:** 3.13 · **License:** MIT
 
 This is an independent learning repository derived from the upstream course. It is not an official Anthropic or Claude Code product. Chapters are standalone teaching examples rather than a single integrated application.
 
@@ -20,8 +20,9 @@ This is an independent learning repository derived from the upstream course. It 
 8. [s08 · Context Compact](s08_context_compact/README.md) — Tool-output budgets, history summaries, and context recovery.
 9. [s09 · Memory](s09_memory/README.md) — Persistent knowledge, selective recall, extraction, and consolidation.
 10. [s10 · Task System](s10_task_system/README.md) — Persistent tasks, prerequisites, claiming, and completion.
+11. [s11 · Background Tasks](s11_background_tasks/README.md) — Run Bash commands in the background and collect results on later turns.
 
-Each chapter contains a runnable `code.py`, English/Chinese/Japanese tutorials, and SVG diagrams. Chapters s11 onward are available in the [upstream course](https://github.com/shareAI-lab/learn-claude-code). Read a chapter's tutorial, inspect its implementation, then try a small task and follow the tool results through the loop.
+Each chapter contains a runnable `code.py`, English/Chinese/Japanese tutorials, and SVG diagrams. Chapters s12 onward are available in the [upstream course](https://github.com/shareAI-lab/learn-claude-code). Read a chapter's tutorial, inspect its implementation, then try a small task and follow the tool results through the loop.
 
 ## Quick start
 
@@ -80,7 +81,7 @@ macOS / Linux:
 .venv/bin/python s01_agent_loop/code.py
 ```
 
-Replace the chapter path to run another lesson, such as `s10_task_system/code.py`. Enter a task at the chapter prompt; type `q` or `exit` to quit. You do not need to start earlier chapters first. On Windows, the tool named `bash` executes through `cmd.exe`, so its commands use cmd syntax.
+Replace the chapter path to run another lesson, such as `s11_background_tasks/code.py`. Enter a task at the chapter prompt; type `q` or `exit` to quit. You do not need to start earlier chapters first. On Windows, the tool named `bash` executes through `cmd.exe`, so its commands use cmd syntax.
 
 ## Suggested exercises
 
@@ -90,10 +91,11 @@ Replace the chapter path to run another lesson, such as `s10_task_system/code.py
 - **s08:** Ask the agent to compare the top-level headings in the README files for s01–s05, then request the `compact` tool. Automatic compaction requires reaching its thresholds; a short task may not trigger it. The upstream exercise file `web/src/data/generated/docs.json` is not included here.
 - **s09:** Say `I prefer using tabs for indentation. Remember that.`, inspect `.memory/`, quit, restart, and ask `What indentation style do I prefer?`. Check actual stored files because extraction depends on model output. Temporary instructions such as `Do not create files in this session.` should not become persistent preferences.
 - **s10 Task System.** Run `s10_task_system/code.py`. Ask the agent to use only task tools to create a schema task and an API task, then make the API depend on the schema. Try claiming the API first. Claim and complete the schema, then inspect the newly unblocked task. Restart and use `list_tasks` to read the progress saved in `.tasks/`.
+- **s11 Background Tasks.** Run `s11_background_tasks/code.py`. Ask the agent to run `git status --short` in the background with `run_in_background=True` and use `glob` to find Markdown files. Look for the startup receipt and completion notification. If the program returns to the input prompt before collecting the result, send another message.
 
 ## Repository contents
 
-- `s01_agent_loop/` through `s10_task_system/`: chapter code, tutorials, and diagrams.
+- `s01_agent_loop/` through `s11_background_tasks/`: chapter code, tutorials, and diagrams.
 - [s01 core exercise](s01_agent_loop/core.py): a handwritten loop fragment that requires caller-provided dependencies; it is not a standalone program.
 - [s02 summary](s02_tool_use/SUMMARY.md): learning-session notes in Chinese.
 - [s05 examples](s05_todo_write/example/): a greeting program and a text utility package with tests.
@@ -140,7 +142,7 @@ Memory stores selected knowledge across sessions; context compaction manages the
 
 ## Releases
 
-See [GitHub Releases](https://github.com/Daredevil3210/learn-claude-code-notes/releases) and the [release notes](RELEASE_NOTES.md) for the version history. Version [v0.8.0](https://github.com/Daredevil3210/learn-claude-code-notes/releases/tag/v0.8.0) added s10 Task System.
+See [GitHub Releases](https://github.com/Daredevil3210/learn-claude-code-notes/releases) and the [release notes](RELEASE_NOTES.md) for the version history. Version [v0.9.0](https://github.com/Daredevil3210/learn-claude-code-notes/releases/tag/v0.9.0) added s11 Background Tasks.
 
 The repository was originally named `s01-agent-loop-learning` and was renamed as its learning scope expanded. Existing commits, tags, and releases are retained.
 

@@ -1,4 +1,4 @@
-# 学习笔记：s01–s10
+# 学习笔记：s01–s11
 
 [返回中文首页](../README.zh.md) · [English overview](../README.md)
 
@@ -39,3 +39,9 @@ s09 新增记忆后，总数达到 10 条时尝试整理；输入超过 20000 �
 先用 `create_task()` 创建所有任务，再用返回的 ID 调用 `update_task()` 添加依赖。`blockedBy` 记录前置任务的 ID。`can_start()` 检查依赖是否全部完成，`claim_task()` 另检查任务状态是否为 `pending`，并把负责人和 `in_progress` 状态保存到磁盘。
 
 `complete_task()` 核对状态和负责人。保存完成状态之前，它收集已经就绪的待处理任务 ID。保存后再次检查，只报告刚满足依赖的任务。`list_tasks()` 查看摘要，`get_task()` 返回完整 JSON。重启后可读取同一工作目录下的 `.tasks/`，查看上次保存的进度。
+
+## s11 Background Tasks
+
+`execute_tool()` 先执行 `PreToolUse`。只有 `bash` 且 `run_in_background` 为布尔值 `True` 时，才启动后台线程并返回带编号的启动回执。同步分支返回实际工具输出。`PostToolUse` 收到的是当前分支的返回文本，后台分支此时提供启动回执或启动错误。
+
+后台线程将状态、输出和待收取编号登记在受锁保护的内存记录中。下一次请求模型前，主循环取走已结束的任务结果，把输出前 500 个字符包装成 `task_notification`。程序停在输入提示符时，下一条用户消息会触发收集。
