@@ -2,7 +2,7 @@
 
 [English](README.md) · [中文](README.zh.md) · [日本語](README.ja.md)
 
-s01 → ... → s09 → s10 → `s11` → [s12](https://github.com/shareAI-lab/learn-claude-code/tree/ce8f9f186058939da54c9d6fead78dfb5d0fd6c3/s12_cron_scheduler) → s13 → ... → s16 → s17
+s01 → ... → s09 → s10 → `s11` → [s12](../s12_cron_scheduler/README.md) → s13 → ... → s16 → s17
 
 > *"Slow operations go to the background, the Agent Loop continues"* — Background threads run commands, and later turns collect completed results.
 >

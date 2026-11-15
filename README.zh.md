@@ -4,7 +4,7 @@
 
 基于 [shareAI-lab/learn-claude-code](https://github.com/shareAI-lab/learn-claude-code) 的编程 Agent 学习仓库，整理章节实现、教程、配图、练习与实现笔记，帮助理解 Agent 如何调用工具并完成任务。
 
-**当前范围：** s01–s11 · **建议 Python 版本：** 3.13 · **许可证：** MIT
+**当前范围：** s01–s12 · **建议 Python 版本：** 3.13 · **许可证：** MIT
 
 本仓库是基于上游课程的独立学习整理项目，不属于 Anthropic 或 Claude Code 官方产品。各章是可独立运行的教学示例，并非一个集成所有能力的应用。
 
@@ -21,8 +21,9 @@
 9. [s09 · Memory](s09_memory/README.zh.md) — 跨会话知识存储、相关记忆召回、提取与整理。
 10. [s10 · Task System](s10_task_system/README.zh.md) — 持久化任务、前置依赖、认领和完成。
 11. [s11 · Background Tasks](s11_background_tasks/README.zh.md) — 显式在后台执行 Bash 命令，并在后续轮次收取结果。
+12. [s12 · Cron Scheduler](s12_cron_scheduler/README.zh.md) — 按时间将提示词加入队列，在 Agent 空闲时交付。
 
-每章包含可运行的 `code.py`、中英日教程和 SVG 配图。s12 及后续内容请参阅[上游课程](https://github.com/shareAI-lab/learn-claude-code)。建议先阅读教程，再对照源码，最后用小任务观察工具调用及结果如何进入循环。
+每章包含可运行的 `code.py`、中英日教程和 SVG 配图。s13 及后续内容请参阅[上游课程](https://github.com/shareAI-lab/learn-claude-code)。建议先阅读教程，再对照源码，最后用小任务观察工具调用及结果如何进入循环。
 
 ## 快速开始
 
@@ -92,10 +93,11 @@ macOS / Linux：
 - **s09：** 输入 `I prefer using tabs for indentation. Remember that.`，检查 `.memory/`，退出并重新启动，再问 `What indentation style do I prefer?`。提取结果取决于模型输出，应检查实际文件；`Do not create files in this session.` 这样的临时要求不应成为长期偏好。
 - 在 **s10 Task System** 中运行 `s10_task_system/code.py`，请 Agent 只用任务工具创建“建表”和“写 API”，让写 API 依赖建表。先尝试认领写 API，再认领并完成建表，观察新解锁提示。重启后调用 `list_tasks` 检查 `.tasks/` 中保存的进度。
 - 在 **s11 Background Tasks** 中运行 `s11_background_tasks/code.py`，请 Agent 用 `run_in_background=True` 在后台运行 `git status --short`，同时用 `glob` 查找 Markdown 文件。观察启动回执和完成通知。如果程序回到输入提示符时还没收到结果，再发一条消息触发收集。
+- 在 **s12 Cron Scheduler** 中运行 `s12_cron_scheduler/code.py`，请 Agent 在本次会话内每两分钟执行一次「列出仓库根目录的 Markdown 文件」。让程序保持运行，观察到点后的交付日志。用 `list_crons` 查看任务编号，再用 `cancel_cron` 取消任务。
 
 ## 仓库内容
 
-- `s01_agent_loop/` 至 `s11_background_tasks/`：章节代码、教程与配图。
+- `s01_agent_loop/` 至 `s12_cron_scheduler/`：章节代码、教程与配图。
 - [s01 核心循环练习](s01_agent_loop/core.py)：手写片段，需要调用方提供依赖，不能独立运行。
 - [s02 学习摘要](s02_tool_use/SUMMARY.md)：第二章中文学习记录。
 - [s05 示例](s05_todo_write/example/)：问候程序、文本工具包及其单元测试。
@@ -138,11 +140,13 @@ macOS / Linux：
 
 任务系统保存工作进度、前置依赖和负责人。任务解锁后仍处于 `pending`，由 Agent 认领后开始。
 
+定时调度使用 Agent 进程的本地时间。持久任务写入 Git 忽略的 `.scheduled_tasks.json`，在下次启动时恢复。进程退出后调度停止，停机期间错过的时间点不会补跑。
+
 Memory 保存跨会话知识，上下文压缩管理当前对话长度。独立的 s09 程序没有集成 s08 的压缩流程；记忆整理使用内存快照尝试恢复，不是可应对程序崩溃的持久备份。
 
 ## 版本记录
 
-完整历史见 [GitHub Releases](https://github.com/Daredevil3210/learn-claude-code-notes/releases) 和[发布说明](RELEASE_NOTES.md)。[v0.9.0](https://github.com/Daredevil3210/learn-claude-code-notes/releases/tag/v0.9.0) 新增 s11 Background Tasks。
+[v0.10.0 版本说明](RELEASE_NOTES.md#v0100)记录 s12 Cron Scheduler 的新增内容。已发布版本见 [GitHub Releases](https://github.com/Daredevil3210/learn-claude-code-notes/releases)。
 
 仓库原名为 `s01-agent-loop-learning`，现随学习范围扩展而更名。既有提交、标签和发布版本均保留。
 

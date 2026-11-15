@@ -35,6 +35,7 @@ Desktop.ini
 .memory/
 .tasks/
 .task_outputs/
+.scheduled_tasks.json
 *.log
 *.tmp
 *.bak
